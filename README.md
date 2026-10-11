@@ -2,27 +2,27 @@
 
 > **Security Orchestration, Automation, and Response** daemon for Cowrie Honeypots.
 
-Sentinel-SOAR est un démon Python léger conçu pour surveiller, parser et réagir en temps réel aux attaques SSH/Telnet capturées par un honeypot Cowrie.
+Sentinel-SOAR is a lightweight Python daemon designed to monitor, parse, and respond in real-time to SSH/Telnet attacks captured by a Cowrie honeypot.
 
-## 🏗️ Architecture du Flux (Data Pipeline)
+## 🏗️ Data Pipeline Architecture
 
-Le flux de données est direct et isolé : 
-1. **Interception :** Cowrie encaisse l'attaque (CGNAT) et génère un log JSON. 
-2. **Parsing :** Le démon Python surveille ce fichier en temps réel (I/O non bloquant).
-3. **Double Action :** Il archive la trace à froid dans une base relationnelle SQLite pour l'historique, et déclenche simultanément une requête HTTP POST vers un Webhook Discord pour l'alerte à la seconde.
+The data flow is direct and isolated: 
+1. **Interception:** Cowrie absorbs the attack (CGNAT restricted) and generates a JSON log. 
+2. **Parsing:** The Python daemon monitors this file in real-time (non-blocking I/O).
+3. **Dual Action:** It archives the trace in a local SQLite relational database for historical analysis, while simultaneously triggering an HTTP POST request to a Discord Webhook for sub-second alerting.
 
-## ✨ Fonctionnalités Core
+## ✨ Core Features
 
-* **Parsing Temps Réel :** Lecture continue du fichier `cowrie.json` via un pointeur de fin de fichier (`os.SEEK_END`).
-* **Archivage SQL :** Structuration des métadonnées d'attaque (IP, credentials, timestamp) dans une base de données relationnelle locale (`sqlite3`).
-* **Alerte Instantanée :** Notification Push via Webhook HTTP.
-* **Sécurité des Secrets :** Utilisation de `python-dotenv` pour isoler les URL et credentials hors du code source.
+* **Real-Time Parsing:** Continuous reading of the `cowrie.json` file using an end-of-file pointer (`os.SEEK_END`).
+* **SQL Archiving:** Structuring attack metadata (IP, credentials, timestamp) into a local relational database (`sqlite3`).
+* **Instant Alerting:** Push notifications via HTTP Webhook.
+* **Secrets Management:** Utilizing `python-dotenv` to securely isolate URLs and credentials from the source code.
 
-## ⚙️ Déploiement (Standard de l'industrie)
+## ⚙️ Deployment (Industry Standard)
 
-### 1. Prérequis
+### 1. Prerequisites
 * Python 3.10+
-* Un environnement virtuel (recommandation : gestionnaire `uv`)
+* A virtual environment (recommended: `uv` package manager)
 
 ### 2. Installation
 ```bash
@@ -32,13 +32,13 @@ uv venv
 uv pip install python-dotenv requests
 ```
 
-### 3. Configuration de la Sécurité
-Créer un fichier `.env` à la racine pour isoler le secret (fichier volontairement ignoré par Git) :
+### 3. Security Configuration
+Create a `.env` file at the root to isolate the secret (intentionally ignored by Git):
 ```env
-WEBHOOK_URL="[https://discord.com/api/webhooks/VOTRE_LIEN_SECRET](https://discord.com/api/webhooks/VOTRE_LIEN_SECRET)"
+WEBHOOK_URL="[https://discord.com/api/webhooks/YOUR_SECRET_LINK](https://discord.com/api/webhooks/YOUR_SECRET_LINK)"
 ```
 
-### 4. Allumage
+### 4. Startup
 ```bash
 uv run sentinel_soar.py
 ```
